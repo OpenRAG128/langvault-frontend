@@ -56,17 +56,16 @@
         <!-- Upload Section -->
         <section class="upload-section">
             <div class="upload-container">
-                {% if error %}
-                <div class="error-alert">
+                <!-- Error Alert (Hidden by default) -->
+                <div class="error-alert" id="errorAlert" style="display: none;">
                     <div class="alert-icon">
                         <i class="fas fa-exclamation-triangle"></i>
                     </div>
                     <div class="alert-content">
                         <h4>Translation Error</h4>
-                        <p>{{ error }}</p>
+                        <p id="errorMessage"></p>
                     </div>
                 </div>
-                {% endif %}
 
                 <div class="upload-card glass-card">
                     <div class="card-header">
@@ -79,7 +78,7 @@
                         </div>
                     </div>
 
-                    <form method="POST" enctype="multipart/form-data" class="upload-form" id="uploadForm">
+                    <form class="upload-form" id="uploadForm">
                         <!-- File Upload Area -->
                         <div class="file-drop-zone" id="dropZone">
                             <div class="drop-zone-content">
@@ -90,10 +89,10 @@
                                 <p>or <span class="browse-text" id="browseText">browse files</span></p>
                                 <div class="file-info">
                                     <i class="fas fa-info-circle"></i>
-                                    <span>Maximum file size: 10MB</span>
+                                    <span>Maximum file size: 50MB</span>
                                 </div>
                             </div>
-                            <input type="file" id="fileInput" name="file" accept=".pdf" required hidden>
+                            <input type="file" id="fileInput" name="file" accept=".pdf,.docx,.txt" required hidden>
                             <div class="file-preview" id="filePreview" style="display: none;">
                                 <div class="file-item">
                                     <i class="fas fa-file-pdf"></i>
@@ -126,6 +125,8 @@
                                     <div class="suggestion-item" data-lang="Japanese">🇯🇵 Japanese</div>
                                     <div class="suggestion-item" data-lang="Korean">🇰🇷 Korean</div>
                                     <div class="suggestion-item" data-lang="Chinese">🇨🇳 Chinese</div>
+                                    <div class="suggestion-item" data-lang="Hindi">🇮🇳 Hindi</div>
+                                    <div class="suggestion-item" data-lang="Arabic">🇸🇦 Arabic</div>
                                 </div>
                             </div>
                         </div>
@@ -146,9 +147,8 @@
             </div>
         </section>
 
-        <!-- Results Section -->
-        {% if translated_text %}
-        <section class="results-section">
+        <!-- Results Section (Hidden by default) -->
+        <section class="results-section" id="resultsSection" style="display: none;">
             <div class="results-container">
                 <div class="results-card glass-card">
                     <div class="results-header">
@@ -157,11 +157,14 @@
                         </div>
                         <div class="results-info">
                             <h3>Translation Complete</h3>
-                            <p>{{ page_count }} pages successfully processed</p>
+                            <p id="pageCountText">pages successfully processed</p>
                         </div>
                         <div class="results-actions">
                             <button class="action-btn" id="copyText" title="Copy to clipboard">
                                 <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn" id="downloadText" title="Download as text file">
+                                <i class="fas fa-download"></i>
                             </button>
                         </div>
                     </div>
@@ -179,13 +182,15 @@
                         </div>
 
                         <div class="tab-content active" id="preview">
-                            <div class="translated-text">
-                                {{ translated_text | safe | replace('\n', '<br>') }}
+                            <div class="translated-text" id="translatedTextPreview">
+                                <!-- Translation result will be inserted here -->
                             </div>
                         </div>
 
                         <div class="tab-content" id="formatted">
-                            <pre class="formatted-text">{{ translated_text }}</pre>
+                            <pre class="formatted-text" id="translatedTextFormatted">
+                                <!-- Formatted translation will be inserted here -->
+                            </pre>
                         </div>
                     </div>
 
@@ -194,14 +199,14 @@
                         <div class="stat-item">
                             <i class="fas fa-file-alt"></i>
                             <div class="stat-info">
-                                <span class="stat-value">{{ page_count }}</span>
+                                <span class="stat-value" id="statPages">0</span>
                                 <span class="stat-label">Pages</span>
                             </div>
                         </div>
                         <div class="stat-item">
                             <i class="fas fa-clock"></i>
                             <div class="stat-info">
-                                <span class="stat-value">~2min</span>
+                                <span class="stat-value" id="statTime">~2min</span>
                                 <span class="stat-label">Processing</span>
                             </div>
                         </div>
@@ -216,7 +221,6 @@
                 </div>
             </div>
         </section>
-        {% endif %}
 
         <!-- Features Section -->
         <section class="features-section" id="features">
